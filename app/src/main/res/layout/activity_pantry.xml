@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Pantry"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="15dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingredients currently available"
+        android:textSize="16sp"
+        android:layout_marginBottom="20dp" />
+
+    <Button
+        android:id="@+id/btnAddIngredient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Ingredient"
+        android:layout_marginBottom="20dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPantry"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
