@@ -1,19 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Smart Pantry Manager"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save food. Cook smarter. Waste less."
+            android:textSize="16sp"
+            android:gravity="center"
+            android:layout_marginBottom="35dp" />
+
+        <Button
+            android:id="@+id/btnPantry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="My Pantry"
+            android:layout_marginBottom="15dp" />
+
+        <Button
+            android:id="@+id/btnRescue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pantry Rescue Mode"
+            android:layout_marginBottom="15dp" />
+
+        <Button
+            android:id="@+id/btnHealth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pantry Health"
+            android:layout_marginBottom="15dp" />
+
+        <Button
+            android:id="@+id/btnWaste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Waste Saved"
+            android:layout_marginBottom="15dp" />
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Settings" />
+
+    </LinearLayout>
+
+</ScrollView>
