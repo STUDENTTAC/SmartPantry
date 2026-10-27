@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:layout_marginBottom="8dp">
+
+    <TextView
+        android:id="@+id/txtIngredientName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Ingredient Name"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/txtIngredientQuantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quantity"
+        android:textSize="16sp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:id="@+id/txtIngredientExpiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Expiry Date"
+        android:textSize="14sp"
+        android:layout_marginTop="5dp" />
+
+    <Button
+        android:id="@+id/btnEditIngredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:layout_marginTop="10dp" />
+
+    <Button
+        android:id="@+id/btnDeleteIngredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:layout_marginTop="5dp" />
+
+</LinearLayout>
