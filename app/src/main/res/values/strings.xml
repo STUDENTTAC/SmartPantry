@@ -24,6 +24,13 @@
     <string name="stat_items">Pantry items</string>
     <string name="stat_recipes">Recipes ready</string>
     <string name="stat_expiring">Expiring soon</string>
+    <string name="stat_health">Pantry health</string>
+    <string name="stat_meals_cooked">Meals cooked</string>
+    <string name="stat_rescued">Ingredients rescued</string>
+    <string name="health_empty">Empty</string>
+    <string name="health_healthy">Healthy</string>
+    <string name="health_use_soon">Use soon</string>
+    <string name="health_high_risk">High risk</string>
     <string name="home_ready_title">Ready to cook</string>
     <string name="home_see_all">See all</string>
     <string name="home_ready_empty">No recipes match your pantry yet - add more ingredients.</string>
@@ -77,6 +84,7 @@
     <string name="recipes_empty">No recipes match your pantry yet. Add more ingredients.</string>
     <string name="recipe_ready">You have everything required</string>
     <string name="recipe_not_ready">Check ingredients</string>
+    <string name="recipe_availability">%1$d of %2$d ingredients available — still need %3$d</string>
     <string name="view_recipe">View</string>
 
     <!-- Recipe detail -->
@@ -84,6 +92,18 @@
     <string name="detail_ingredients">Ingredients</string>
     <string name="detail_method">Method</string>
     <string name="detail_ready_badge">Ready to cook</string>
+    <string name="detail_missing_ingredient">Still need to add this ingredient</string>
+    <string name="detail_not_enough">Not enough in your pantry yet</string>
+    <string name="detail_available">Available in your pantry</string>
+    <string name="detail_requirements_missing">No ingredient requirements have been saved for this recipe yet.</string>
+    <string name="detail_not_configured">Ingredients not configured</string>
+    <string name="detail_ready_count">All %1$d ingredients available — ready to make</string>
+    <string name="detail_missing_count">%1$d of %2$d ingredients available — still need %3$d</string>
+    <string name="cook_recipe">Cook This Recipe</string>
+    <string name="cook_success">Meal cooked — pantry updated</string>
+    <string name="cook_failed">Pantry no longer has enough ingredients</string>
+    <string name="cook_next_none">Pantry updated. No other recipes are ready right now.</string>
+    <string name="cook_next_recipe">Pantry updated. Next idea: %1$s</string>
 
     <!-- Rescue -->
     <string name="rescue_title">Pantry Rescue</string>
@@ -103,6 +123,14 @@
     <plurals name="home_banner_expiring">
         <item quantity="one">%1$d item is expiring within 3 days. Cook it first!</item>
         <item quantity="other">%1$d items are expiring within 3 days. Cook them first!</item>
+    </plurals>
+    <plurals name="home_banner_expired">
+        <item quantity="one">%1$d pantry item is already past its expiry date. Check it now.</item>
+        <item quantity="other">%1$d pantry items are already past their expiry dates. Check them now.</item>
+    </plurals>
+    <plurals name="rescue_score">
+        <item quantity="one">Rescue score: %1$d expiring ingredient</item>
+        <item quantity="other">Rescue score: %1$d expiring ingredients</item>
     </plurals>
     <plurals name="pantry_count">
         <item quantity="one">%1$d ingredient in your pantry</item>

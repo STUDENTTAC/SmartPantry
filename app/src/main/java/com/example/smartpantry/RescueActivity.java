@@ -13,17 +13,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Pantry Rescue Mode: the same strictly-matched recipes as the Suggested
- * Recipes screen, but sorted so recipes that use ingredients expiring within
- * 3 days come first.
- */
+/** Strictly matched recipes, ranked by how many expiring pantry ingredients they use. */
 public class RescueActivity extends AppCompatActivity {
 
     private RecyclerView recyclerRescue;
     private TextView txtRescueMessage;
     private TextView txtRescueEmpty;
-
     private DatabaseHelper databaseHelper;
 
     @Override
@@ -34,11 +29,9 @@ public class RescueActivity extends AppCompatActivity {
         recyclerRescue = findViewById(R.id.recyclerRescue);
         txtRescueMessage = findViewById(R.id.txtRescueMessage);
         txtRescueEmpty = findViewById(R.id.txtRescueEmpty);
-
         databaseHelper = new DatabaseHelper(this);
 
         recyclerRescue.setLayoutManager(new LinearLayoutManager(this));
-
         NavHelper.setupBottomNav(this, NavHelper.RESCUE);
     }
 
@@ -64,8 +57,6 @@ public class RescueActivity extends AppCompatActivity {
         recyclerRescue.setVisibility(View.VISIBLE);
 
         ArrayList<Ingredient> pantry = databaseHelper.getAllIngredients();
-
-        // score each recipe once, then sort by score (highest first)
         final Map<Integer, Integer> scores = new HashMap<>();
         int highest = 0;
 
@@ -82,10 +73,10 @@ public class RescueActivity extends AppCompatActivity {
                 ? R.string.rescue_priority
                 : R.string.rescue_none_urgent);
 
-        recyclerRescue.setAdapter(new RecipeAdapter(this, recipes));
+        recyclerRescue.setAdapter(new RecipeAdapter(this, recipes, scores));
     }
 
-    /** How many of the recipe's ingredients are in the pantry AND expiring soon. */
+    /** Number of required ingredients that are present and expiring within 3 days. */
     private int rescueScore(Recipe recipe, ArrayList<Ingredient> pantry) {
 
         int score = 0;
@@ -96,12 +87,12 @@ public class RescueActivity extends AppCompatActivity {
             String needed = RecipeMatcher.normalizeName(requirement.getIngredientName());
 
             for (Ingredient ingredient : pantry) {
-
                 if (RecipeMatcher.normalizeName(ingredient.getName()).equals(needed)
+                        && RecipeMatcher.unitFamily(ingredient.getUnit())
+                        .equals(RecipeMatcher.unitFamily(requirement.getUnit()))
                         && ExpiryUtils.isExpiringSoon(ingredient.getExpiryDate())) {
-
                     score++;
-                    break; // count each required ingredient once
+                    break;
                 }
             }
         }

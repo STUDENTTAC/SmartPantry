@@ -276,4 +276,137 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return suggested;
     }
+
+    /** Result of a Cook & Deduct operation. */
+    public static final class CookResult {
+        private final boolean success;
+        private final int rescuedIngredients;
+
+        CookResult(boolean success, int rescuedIngredients) {
+            this.success = success;
+            this.rescuedIngredients = rescuedIngredients;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public int getRescuedIngredients() {
+            return rescuedIngredients;
+        }
+    }
+
+    /**
+     * Cook & Deduct: atomically subtracts one recipe serving from the pantry.
+     * Soon-to-expire matching rows are consumed first so Rescue Mode has a real effect.
+     * If the pantry no longer covers every requirement, nothing is changed.
+     */
+    public CookResult consumeRecipe(int recipeId) {
+
+        ArrayList<RecipeRequirement> requirements = getRecipeRequirements(recipeId);
+        ArrayList<Ingredient> pantry = getAllIngredients();
+
+        if (!RecipeMatcher.canMake(requirements, pantry)) {
+            return new CookResult(false, 0);
+        }
+
+        SQLiteDatabase db = getWritableDatabase();
+        java.util.HashSet<Integer> rescuedRows = new java.util.HashSet<>();
+
+        db.beginTransaction();
+
+        try {
+            for (RecipeRequirement requirement : requirements) {
+
+                double remainingBase = RecipeMatcher.toBaseQuantity(
+                        requirement.getQuantity(), requirement.getUnit());
+
+                ArrayList<Ingredient> matches = new ArrayList<>();
+
+                for (Ingredient ingredient : pantry) {
+                    boolean sameName = RecipeMatcher.normalizeName(ingredient.getName())
+                            .equals(RecipeMatcher.normalizeName(requirement.getIngredientName()));
+                    boolean sameFamily = RecipeMatcher.unitFamily(ingredient.getUnit())
+                            .equals(RecipeMatcher.unitFamily(requirement.getUnit()));
+
+                    if (sameName && sameFamily && ingredient.getQuantity() > 0) {
+                        matches.add(ingredient);
+                    }
+                }
+
+                // Use food that is closest to expiry first; undated/expired rows come later.
+                matches.sort((a, b) -> Integer.compare(
+                        expiryPriority(a.getExpiryDate()),
+                        expiryPriority(b.getExpiryDate())));
+
+                for (Ingredient ingredient : matches) {
+                    if (remainingBase <= 1e-9) {
+                        break;
+                    }
+
+                    double unitFactor = RecipeMatcher.toBaseQuantity(1, ingredient.getUnit());
+                    double rowBase = ingredient.getQuantity() * unitFactor;
+                    double usedBase = Math.min(rowBase, remainingBase);
+
+                    if (usedBase <= 1e-9) {
+                        continue;
+                    }
+
+                    if (ExpiryUtils.isExpiringSoon(ingredient.getExpiryDate())) {
+                        rescuedRows.add(ingredient.getId());
+                    }
+
+                    double newBase = rowBase - usedBase;
+                    double newQuantity = newBase / unitFactor;
+
+                    if (newQuantity <= 1e-9) {
+                        db.delete(
+                                TABLE_INGREDIENTS,
+                                COL_ID + "=?",
+                                new String[]{String.valueOf(ingredient.getId())});
+                        ingredient.setQuantity(0);
+                    } else {
+                        ContentValues values = new ContentValues();
+                        values.put(COL_QUANTITY, newQuantity);
+                        db.update(
+                                TABLE_INGREDIENTS,
+                                values,
+                                COL_ID + "=?",
+                                new String[]{String.valueOf(ingredient.getId())});
+                        ingredient.setQuantity(newQuantity);
+                    }
+
+                    remainingBase -= usedBase;
+                }
+
+                if (remainingBase > 1e-7) {
+                    // Defensive guard. The pre-check should make this impossible.
+                    throw new IllegalStateException("Pantry changed during recipe deduction");
+                }
+            }
+
+            db.setTransactionSuccessful();
+            return new CookResult(true, rescuedRows.size());
+
+        } catch (Exception e) {
+            return new CookResult(false, 0);
+
+        } finally {
+            db.endTransaction();
+        }
+    }
+
+    private int expiryPriority(String expiryDate) {
+        int days = ExpiryUtils.daysUntilExpiry(expiryDate);
+
+        if (days == ExpiryUtils.NO_DATE) {
+            return Integer.MAX_VALUE - 1;
+        }
+
+        if (days < 0) {
+            return Integer.MAX_VALUE;
+        }
+
+        return days;
+    }
 }

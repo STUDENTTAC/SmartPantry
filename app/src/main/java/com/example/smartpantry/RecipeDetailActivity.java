@@ -1,21 +1,27 @@
 package com.example.smartpantry;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 
-/** Recipe Detail screen: full ingredient list and numbered method steps. */
+/** Recipe Detail screen: full ingredient list, method, and Cook & Deduct action. */
 public class RecipeDetailActivity extends AppCompatActivity {
 
     private TextView txtDetailName;
     private TextView txtIngredients;
     private TextView txtMethod;
     private TextView txtRecipeReadiness;
+    private TextView txtAfterCook;
+    private Button btnCookRecipe;
 
     private DatabaseHelper databaseHelper;
+    private int recipeId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +34,64 @@ public class RecipeDetailActivity extends AppCompatActivity {
         txtIngredients = findViewById(R.id.txtIngredients);
         txtMethod = findViewById(R.id.txtMethod);
         txtRecipeReadiness = findViewById(R.id.txtRecipeReadiness);
+        txtAfterCook = findViewById(R.id.txtAfterCook);
+        btnCookRecipe = findViewById(R.id.btnCookRecipe);
 
         databaseHelper = new DatabaseHelper(this);
 
-        // data sent by RecipeAdapter through the Intent
-        int recipeId = getIntent().getIntExtra("recipeId", -1);
+        recipeId = getIntent().getIntExtra("recipeId", -1);
         String recipeName = getIntent().getStringExtra("recipeName");
         String recipeMethod = getIntent().getStringExtra("recipeMethod");
 
         txtDetailName.setText(recipeName);
         txtMethod.setText(formatSteps(recipeMethod));
 
+        btnCookRecipe.setOnClickListener(v -> cookRecipe());
+
+        refreshRecipeState();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshRecipeState();
+    }
+
+    private void refreshRecipeState() {
         showIngredients(recipeId);
+
+        ArrayList<RecipeRequirement> requirements = databaseHelper.getRecipeRequirements(recipeId);
+        ArrayList<Ingredient> pantry = databaseHelper.getAllIngredients();
+        boolean ready = RecipeMatcher.canMake(requirements, pantry);
+
+        btnCookRecipe.setEnabled(ready);
+        btnCookRecipe.setAlpha(ready ? 1f : 0.45f);
+    }
+
+    private void cookRecipe() {
+        DatabaseHelper.CookResult result = databaseHelper.consumeRecipe(recipeId);
+
+        if (!result.isSuccess()) {
+            Toast.makeText(this, R.string.cook_failed, Toast.LENGTH_SHORT).show();
+            refreshRecipeState();
+            return;
+        }
+
+        AppSettings.recordCookedMeal(this, result.getRescuedIngredients());
+        Toast.makeText(this, R.string.cook_success, Toast.LENGTH_SHORT).show();
+
+        ArrayList<Recipe> nextRecipes = databaseHelper.getSuggestedRecipes();
+        txtAfterCook.setVisibility(View.VISIBLE);
+
+        if (nextRecipes.isEmpty()) {
+            txtAfterCook.setText(R.string.cook_next_none);
+        } else {
+            txtAfterCook.setText(getString(
+                    R.string.cook_next_recipe,
+                    nextRecipes.get(0).getName()));
+        }
+
+        refreshRecipeState();
     }
 
     private void showIngredients(int recipeId) {
@@ -78,24 +130,29 @@ public class RecipeDetailActivity extends AppCompatActivity {
             if (!enough) {
                 builder.append("\n     ");
                 if (availableBase <= 1e-9) {
-                    builder.append("Still need to add this ingredient");
+                    builder.append(getString(R.string.detail_missing_ingredient));
                 } else {
-                    builder.append("Not enough in your pantry yet");
+                    builder.append(getString(R.string.detail_not_enough));
                 }
             } else {
-                builder.append("\n     Available in your pantry");
+                builder.append("\n     ")
+                        .append(getString(R.string.detail_available));
             }
         }
 
         if (requirements.isEmpty()) {
-            builder.append("No ingredient requirements have been saved for this recipe yet.");
-            txtRecipeReadiness.setText("Ingredients not configured");
+            builder.append(getString(R.string.detail_requirements_missing));
+            txtRecipeReadiness.setText(R.string.detail_not_configured);
         } else if (missingCount == 0) {
-            txtRecipeReadiness.setText("All " + requirements.size()
-                    + " ingredients available — ready to make");
+            txtRecipeReadiness.setText(getString(
+                    R.string.detail_ready_count,
+                    requirements.size()));
         } else {
-            txtRecipeReadiness.setText(availableCount + " of " + requirements.size()
-                    + " ingredients available — still need " + missingCount);
+            txtRecipeReadiness.setText(getString(
+                    R.string.detail_missing_count,
+                    availableCount,
+                    requirements.size(),
+                    missingCount));
         }
 
         txtIngredients.setText(builder.toString());

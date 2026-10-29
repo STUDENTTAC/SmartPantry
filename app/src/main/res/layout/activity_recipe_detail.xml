@@ -74,6 +74,24 @@
                 android:padding="18dp"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/btnCookRecipe"
+                style="@style/Widget.App.Button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="@string/cook_recipe" />
+
+            <TextView
+                android:id="@+id/txtAfterCook"
+                style="@style/AppTextMuted"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_card"
+                android:padding="16dp"
+                android:visibility="gone" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
