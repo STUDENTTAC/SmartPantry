@@ -10,14 +10,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+/**
+ * Suggested Recipes screen. Shows only recipes that pass the strict-matching
+ * rule against the user's current pantry.
+ */
 public class RecipeActivity extends AppCompatActivity {
 
-    RecyclerView recyclerRecipes;
-    TextView txtNoRecipes;
+    private RecyclerView recyclerRecipes;
+    private TextView txtNoRecipes;
 
-    DatabaseHelper databaseHelper;
-    ArrayList<Recipe> recipeList;
-    RecipeAdapter recipeAdapter;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +31,12 @@ public class RecipeActivity extends AppCompatActivity {
 
         databaseHelper = new DatabaseHelper(this);
 
-        recyclerRecipes.setLayoutManager(
-                new LinearLayoutManager(this)
-        );
+        recyclerRecipes.setLayoutManager(new LinearLayoutManager(this));
+
+        NavHelper.setupBottomNav(this, NavHelper.RECIPES);
     }
 
+    /** Re-run the matching every time the screen is shown (the pantry may have changed). */
     @Override
     protected void onResume() {
         super.onResume();
@@ -42,24 +45,20 @@ public class RecipeActivity extends AppCompatActivity {
 
     private void loadSuggestedRecipes() {
 
-        recipeList = databaseHelper.getSuggestedRecipes();
+        // Assignment core rule: show ONLY recipes the user can make right now.
+        ArrayList<Recipe> recipes = databaseHelper.getSuggestedRecipes();
 
-        if (recipeList.isEmpty()) {
+        if (recipes.isEmpty()) {
 
+            // friendly message instead of a blank screen
             recyclerRecipes.setVisibility(View.GONE);
             txtNoRecipes.setVisibility(View.VISIBLE);
 
         } else {
 
-            recyclerRecipes.setVisibility(View.VISIBLE);
             txtNoRecipes.setVisibility(View.GONE);
-
-            recipeAdapter = new RecipeAdapter(
-                    this,
-                    recipeList
-            );
-
-            recyclerRecipes.setAdapter(recipeAdapter);
+            recyclerRecipes.setVisibility(View.VISIBLE);
+            recyclerRecipes.setAdapter(new RecipeAdapter(this, recipes));
         }
     }
 }

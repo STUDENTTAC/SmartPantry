@@ -8,20 +8,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Pantry Rescue Mode: the same strictly-matched recipes as the Suggested
+ * Recipes screen, but sorted so recipes that use ingredients expiring within
+ * 3 days come first.
+ */
 public class RescueActivity extends AppCompatActivity {
 
-    RecyclerView recyclerRescue;
-    TextView txtRescueMessage;
+    private RecyclerView recyclerRescue;
+    private TextView txtRescueMessage;
+    private TextView txtRescueEmpty;
 
-    DatabaseHelper databaseHelper;
-    ArrayList<Recipe> rescueRecipes;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,185 +33,79 @@ public class RescueActivity extends AppCompatActivity {
 
         recyclerRescue = findViewById(R.id.recyclerRescue);
         txtRescueMessage = findViewById(R.id.txtRescueMessage);
+        txtRescueEmpty = findViewById(R.id.txtRescueEmpty);
 
         databaseHelper = new DatabaseHelper(this);
 
-        recyclerRescue.setLayoutManager(
-                new LinearLayoutManager(this)
-        );
+        recyclerRescue.setLayoutManager(new LinearLayoutManager(this));
 
+        NavHelper.setupBottomNav(this, NavHelper.RESCUE);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         loadRescueRecipes();
     }
 
     private void loadRescueRecipes() {
 
-        rescueRecipes =
-                databaseHelper.getSuggestedRecipes();
+        ArrayList<Recipe> recipes = databaseHelper.getSuggestedRecipes();
 
-        if (rescueRecipes.isEmpty()) {
-
+        if (recipes.isEmpty()) {
             recyclerRescue.setVisibility(View.GONE);
-
-            txtRescueMessage.setVisibility(View.VISIBLE);
-
-            txtRescueMessage.setText(
-                    "No rescue recipes available yet. Add more pantry ingredients."
-            );
-
+            txtRescueMessage.setVisibility(View.GONE);
+            txtRescueEmpty.setVisibility(View.VISIBLE);
             return;
         }
 
-        Collections.sort(
-                rescueRecipes,
-                (recipe1, recipe2) ->
-                        Integer.compare(
-                                getRescueScore(recipe2),
-                                getRescueScore(recipe1)
-                        )
-        );
+        txtRescueEmpty.setVisibility(View.GONE);
+        txtRescueMessage.setVisibility(View.VISIBLE);
+        recyclerRescue.setVisibility(View.VISIBLE);
 
-        int highestScore =
-                getRescueScore(rescueRecipes.get(0));
+        ArrayList<Ingredient> pantry = databaseHelper.getAllIngredients();
 
-        if (highestScore > 0) {
+        // score each recipe once, then sort by score (highest first)
+        final Map<Integer, Integer> scores = new HashMap<>();
+        int highest = 0;
 
-            txtRescueMessage.setText(
-                    "Recipes using ingredients expiring within 3 days are prioritised."
-            );
-
-        } else {
-
-            txtRescueMessage.setText(
-                    "No urgent ingredients found. Showing recipes you can make now."
-            );
+        for (Recipe recipe : recipes) {
+            int score = rescueScore(recipe, pantry);
+            scores.put(recipe.getId(), score);
+            highest = Math.max(highest, score);
         }
 
-        RecipeAdapter adapter =
-                new RecipeAdapter(
-                        this,
-                        rescueRecipes
-                );
+        Collections.sort(recipes, (a, b) ->
+                Integer.compare(scores.get(b.getId()), scores.get(a.getId())));
 
-        recyclerRescue.setAdapter(adapter);
+        txtRescueMessage.setText(highest > 0
+                ? R.string.rescue_priority
+                : R.string.rescue_none_urgent);
+
+        recyclerRescue.setAdapter(new RecipeAdapter(this, recipes));
     }
 
-    private int getRescueScore(Recipe recipe) {
+    /** How many of the recipe's ingredients are in the pantry AND expiring soon. */
+    private int rescueScore(Recipe recipe, ArrayList<Ingredient> pantry) {
 
         int score = 0;
 
-        ArrayList<RecipeRequirement> requirements =
-                databaseHelper.getRecipeRequirements(
-                        recipe.getId()
-                );
+        for (RecipeRequirement requirement
+                : databaseHelper.getRecipeRequirements(recipe.getId())) {
 
-        ArrayList<Ingredient> pantry =
-                databaseHelper.getAllIngredients();
-
-        for (RecipeRequirement requirement : requirements) {
+            String needed = RecipeMatcher.normalizeName(requirement.getIngredientName());
 
             for (Ingredient ingredient : pantry) {
 
-                if (normalizeName(ingredient.getName())
-                        .equals(
-                                normalizeName(
-                                        requirement.getIngredientName()
-                                )
-                        )
-                        && isExpiringSoon(
-                        ingredient.getExpiryDate()
-                )) {
+                if (RecipeMatcher.normalizeName(ingredient.getName()).equals(needed)
+                        && ExpiryUtils.isExpiringSoon(ingredient.getExpiryDate())) {
 
                     score++;
-                    break;
+                    break; // count each required ingredient once
                 }
             }
         }
 
         return score;
-    }
-
-    private boolean isExpiringSoon(String expiryDate) {
-
-        if (expiryDate == null ||
-                expiryDate.trim().length() == 0) {
-
-            return false;
-        }
-
-        try {
-
-            SimpleDateFormat format =
-                    new SimpleDateFormat(
-                            "dd/MM/yyyy",
-                            Locale.getDefault()
-                    );
-
-            format.setLenient(false);
-
-            Date expiry =
-                    format.parse(expiryDate);
-
-            Date today = new Date();
-
-            if (expiry == null) {
-                return false;
-            }
-
-            long difference =
-                    expiry.getTime()
-                            - today.getTime();
-
-            long days =
-                    TimeUnit.MILLISECONDS
-                            .toDays(difference);
-
-            return days >= 0 && days <= 3;
-
-        } catch (Exception e) {
-
-            return false;
-        }
-    }
-
-    private String normalizeName(String name) {
-
-        if (name == null) {
-            return "";
-        }
-
-        String cleaned =
-                name.toLowerCase(
-                        Locale.ROOT
-                ).trim();
-
-        switch (cleaned) {
-
-            case "tomatoes":
-                return "tomato";
-
-            case "potatoes":
-                return "potato";
-
-            case "eggs":
-                return "egg";
-
-            case "beans":
-                return "bean";
-
-            case "carrots":
-                return "carrot";
-
-            case "bananas":
-                return "banana";
-
-            case "apples":
-                return "apple";
-
-            case "onions":
-                return "onion";
-
-            default:
-                return cleaned;
-        }
     }
 }

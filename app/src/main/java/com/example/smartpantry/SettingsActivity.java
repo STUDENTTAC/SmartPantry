@@ -1,61 +1,36 @@
 package com.example.smartpantry;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.materialswitch.MaterialSwitch;
+
+/**
+ * Settings screen. The expiry-alerts switch is stored with SharedPreferences
+ * and read by the Home and Pantry screens.
+ */
 public class SettingsActivity extends AppCompatActivity {
-
-    Switch switchExpiryAlerts;
-
-    SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        switchExpiryAlerts =
-                findViewById(
-                        R.id.switchExpiryAlerts
-                );
+        NavHelper.setupBottomNav(this, NavHelper.SETTINGS);
 
-        preferences =
-                getSharedPreferences(
-                        "SmartPantrySettings",
-                        MODE_PRIVATE
-                );
+        MaterialSwitch switchExpiryAlerts = findViewById(R.id.switchExpiryAlerts);
 
-        boolean expiryAlerts =
-                preferences.getBoolean(
-                        "expiryAlerts",
-                        true
-                );
+        // set the saved value BEFORE attaching the listener so no "saved" toast appears on open
+        switchExpiryAlerts.setChecked(AppSettings.isExpiryAlertsEnabled(this));
 
-        switchExpiryAlerts.setChecked(
-                expiryAlerts
-        );
+        switchExpiryAlerts.setOnCheckedChangeListener((buttonView, isChecked) -> {
 
-        switchExpiryAlerts
-                .setOnCheckedChangeListener(
-                        (buttonView, isChecked) -> {
+            AppSettings.setExpiryAlertsEnabled(SettingsActivity.this, isChecked);
 
-                            preferences.edit()
-                                    .putBoolean(
-                                            "expiryAlerts",
-                                            isChecked
-                                    )
-                                    .apply();
-
-                            Toast.makeText(
-                                    SettingsActivity.this,
-                                    "Setting saved",
-                                    Toast.LENGTH_SHORT
-                            ).show();
-                        }
-                );
+            Toast.makeText(SettingsActivity.this, R.string.settings_saved,
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 }

@@ -1,5 +1,6 @@
 package com.example.smartpantry;
 
+/** One recipe: its name and preparation method (model class). */
 public class Recipe {
 
     private int id;

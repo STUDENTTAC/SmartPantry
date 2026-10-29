@@ -1,5 +1,6 @@
 package com.example.smartpantry;
 
+/** One row of the pantry (model class for the ingredients table). */
 public class Ingredient {
 
     private int id;
@@ -68,5 +69,15 @@ public class Ingredient {
 
     public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    /** Shows 2.0 as "2" and 0.5 as "0.5". */
+    public static String formatQuantity(double quantity) {
+
+        if (quantity == Math.rint(quantity)) {
+            return String.valueOf((long) quantity);
+        }
+
+        return String.valueOf(quantity);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.smartpantry;
 
+/** One ingredient a recipe needs: name, quantity and unit (model class). */
 public class RecipeRequirement {
 
     private String ingredientName;

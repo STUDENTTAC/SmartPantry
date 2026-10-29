@@ -2,4 +2,22 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Richfield palette: brand blue #0055AF, brand red #EF423E, white -->
+    <color name="brand">#FF0055AF</color>
+    <color name="accent">#FF6FB1FF</color>
+    <color name="accent_dim">#336FB1FF</color>
+
+    <!-- Navy surfaces derived from the brand blue -->
+    <color name="bg">#FF06182F</color>
+    <color name="surface">#FF0B2548</color>
+    <color name="surface_high">#FF12356A</color>
+    <color name="stroke">#FF1D4A8A</color>
+
+    <color name="text_primary">#FFFFFFFF</color>
+    <color name="text_muted">#FF9FB4D1</color>
+    <color name="warn">#FFFFB020</color>
+    <color name="warn_dim">#33FFB020</color>
+    <color name="danger">#FFEF423E</color>
+    <color name="danger_dim">#33EF423E</color>
 </resources>

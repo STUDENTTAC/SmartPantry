@@ -1,103 +1,59 @@
 package com.example.smartpantry;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/** Add Ingredient screen (CREATE). Validates the form, then inserts into SQLite. */
 public class AddIngredientActivity extends AppCompatActivity {
 
-    EditText edtName;
-    EditText edtQuantity;
-    EditText edtUnit;
-    EditText edtExpiry;
+    private EditText edtName;
+    private EditText edtQuantity;
+    private EditText edtUnit;
+    private EditText edtExpiry;
 
-    Button btnSaveIngredient;
-
-    DatabaseHelper databaseHelper;
+    private DatabaseHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ingredient);
 
+        NavHelper.setupBackHeader(this, R.string.add_title);
+
         edtName = findViewById(R.id.edtName);
         edtQuantity = findViewById(R.id.edtQuantity);
         edtUnit = findViewById(R.id.edtUnit);
         edtExpiry = findViewById(R.id.edtExpiry);
 
-        btnSaveIngredient = findViewById(R.id.btnSaveIngredient);
-
         databaseHelper = new DatabaseHelper(this);
 
-        btnSaveIngredient.setOnClickListener(v -> saveIngredient());
+        // the date is picked from a calendar dialog, never typed by hand
+        edtExpiry.setOnClickListener(v -> ExpiryUtils.showDatePicker(this, edtExpiry));
+        findViewById(R.id.btnClearExpiry).setOnClickListener(v -> edtExpiry.setText(""));
+
+        findViewById(R.id.btnSaveIngredient).setOnClickListener(v -> saveIngredient());
     }
 
     private void saveIngredient() {
 
-        String name = edtName.getText().toString().trim();
-        String quantityText = edtQuantity.getText().toString().trim();
-        String unit = edtUnit.getText().toString().trim();
-        String expiry = edtExpiry.getText().toString().trim();
+        Ingredient ingredient =
+                IngredientForm.validate(edtName, edtQuantity, edtUnit, edtExpiry);
 
-        if (name.isEmpty()) {
-
-            edtName.setError("Enter ingredient name");
-            return;
+        if (ingredient == null) {
+            return; // an error is already shown on the offending field
         }
 
-        if (quantityText.isEmpty()) {
+        if (databaseHelper.addIngredient(ingredient)) {
 
-            edtQuantity.setError("Enter quantity");
-            return;
-        }
-
-        if (unit.isEmpty()) {
-
-            edtUnit.setError("Enter unit");
-            return;
-        }
-
-        double quantity;
-
-        try {
-
-            quantity = Double.parseDouble(quantityText);
-
-        } catch (NumberFormatException e) {
-
-            edtQuantity.setError("Enter a valid number");
-            return;
-        }
-
-        Ingredient ingredient = new Ingredient(
-                name,
-                quantity,
-                unit,
-                expiry
-        );
-
-        boolean inserted = databaseHelper.addIngredient(ingredient);
-
-        if (inserted) {
-
-            Toast.makeText(
-                    this,
-                    "Ingredient added",
-                    Toast.LENGTH_SHORT
-            ).show();
-
+            Toast.makeText(this, R.string.ingredient_added, Toast.LENGTH_SHORT).show();
             finish();
 
         } else {
 
-            Toast.makeText(
-                    this,
-                    "Could not add ingredient",
-                    Toast.LENGTH_SHORT
-            ).show();
+            Toast.makeText(this, R.string.ingredient_add_failed, Toast.LENGTH_SHORT).show();
         }
     }
 }
