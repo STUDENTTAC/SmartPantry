@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="68dp"
+    android:background="@drawable/bg_nav"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/navHome"
+        style="@style/NavItem">
+
+        <ImageView
+            android:id="@+id/navHomeIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_home"
+            android:tint="@color/nav_tint" />
+
+        <TextView
+            android:id="@+id/navHomeLabel"
+            style="@style/NavLabel"
+            android:text="@string/nav_home" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navPantry"
+        style="@style/NavItem">
+
+        <ImageView
+            android:id="@+id/navPantryIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_pantry"
+            android:tint="@color/nav_tint" />
+
+        <TextView
+            android:id="@+id/navPantryLabel"
+            style="@style/NavLabel"
+            android:text="@string/nav_pantry" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navRecipes"
+        style="@style/NavItem">
+
+        <ImageView
+            android:id="@+id/navRecipesIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_recipes"
+            android:tint="@color/nav_tint" />
+
+        <TextView
+            android:id="@+id/navRecipesLabel"
+            style="@style/NavLabel"
+            android:text="@string/nav_recipes" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navRescue"
+        style="@style/NavItem">
+
+        <ImageView
+            android:id="@+id/navRescueIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_rescue"
+            android:tint="@color/nav_tint" />
+
+        <TextView
+            android:id="@+id/navRescueLabel"
+            style="@style/NavLabel"
+            android:text="@string/nav_rescue" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/navSettings"
+        style="@style/NavItem">
+
+        <ImageView
+            android:id="@+id/navSettingsIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_settings"
+            android:tint="@color/nav_tint" />
+
+        <TextView
+            android:id="@+id/navSettingsLabel"
+            style="@style/NavLabel"
+            android:text="@string/nav_settings" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,86 @@
+<resources>
+    <!-- Filled Richfield-blue button -->
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/brand</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="iconTint">@color/white</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <!-- White button (used on the blue banner) -->
+    <style name="Widget.App.Button.Light" parent="Widget.App.Button">
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColor">@color/brand</item>
+        <item name="iconTint">@color/brand</item>
+    </style>
+
+    <!-- Small outlined button for list rows -->
+    <style name="Widget.App.Button.Small" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/stroke</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="iconTint">@color/accent</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:minHeight">40dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+    </style>
+
+    <!-- Text styles -->
+    <style name="AppTextTitle">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTextSection">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="AppTextMuted">
+        <item name="android:textColor">@color/text_muted</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="AppTextLabel">
+        <item name="android:textColor">@color/text_muted</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:layout_marginBottom">6dp</item>
+    </style>
+
+    <!-- Text field -->
+    <style name="Widget.App.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textColorHint">@color/text_muted</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <!-- Bottom-navigation item -->
+    <style name="NavItem">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="NavLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/nav_tint</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:layout_marginTop">3dp</item>
+    </style>
+</resources>

@@ -39,6 +39,9 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".AllRecipesActivity"
+            android:exported="false" />
+        <activity
             android:name=".RecipeDetailActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

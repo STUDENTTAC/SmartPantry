@@ -1,5 +1,6 @@
 package com.example.smartpantry;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -34,6 +35,9 @@ public class RecipeActivity extends AppCompatActivity {
         recyclerRecipes.setLayoutManager(new LinearLayoutManager(this));
 
         NavHelper.setupBottomNav(this, NavHelper.RECIPES);
+
+        findViewById(R.id.btnAllRecipes).setOnClickListener(v ->
+                startActivity(new Intent(RecipeActivity.this, AllRecipesActivity.class)));
     }
 
     /** Re-run the matching every time the screen is shown (the pantry may have changed). */

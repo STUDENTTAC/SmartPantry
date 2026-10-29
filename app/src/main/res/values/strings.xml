@@ -82,6 +82,9 @@
     <string name="recipes_title">Suggested Recipes</string>
     <string name="recipes_subtitle">Only recipes you can make with your current pantry are shown.</string>
     <string name="recipes_empty">No recipes match your pantry yet. Add more ingredients.</string>
+    <string name="browse_all_recipes">Browse All Recipes</string>
+    <string name="all_recipes_title">All Recipes</string>
+    <string name="all_recipes_subtitle">Browse all 20 recipes. Each card shows whether you can make it now or what is still missing.</string>
     <string name="recipe_ready">You have everything required</string>
     <string name="recipe_not_ready">Check ingredients</string>
     <string name="recipe_availability">%1$d of %2$d ingredients available — still need %3$d</string>
