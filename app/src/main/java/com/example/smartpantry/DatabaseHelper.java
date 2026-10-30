@@ -8,25 +8,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
 
-/**
- * Local on-device SQLite database (SQLiteOpenHelper).
- *
- * <p>Tables:</p>
- * <ul>
- *     <li><b>ingredients</b> - the user's pantry (full CRUD)</li>
- *     <li><b>recipes</b> - seeded recipe collection (name + method)</li>
- *     <li><b>recipe_ingredients</b> - what each recipe needs (many rows per recipe)</li>
- * </ul>
- *
- * <p>SQLite stores its file in the app's private storage, so pantry data survives
- * closing and reopening the app. Queries here are tiny, so they run directly on
- * the main thread; a larger app would move them to a background thread.</p>
- */
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "smart_pantry.db";
 
-    /** Version 3 repairs/ensures the preloaded recipe collection exists. */
+
     private static final int DATABASE_VERSION = 3;
 
     // ---- ingredients table ----
@@ -257,10 +243,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return requirements;
     }
 
-    /**
-     * Runs the strict-matching rule (see {@link RecipeMatcher}) for every recipe
-     * against the current pantry and returns ONLY the recipes that can be made now.
-     */
+
     public ArrayList<Recipe> getSuggestedRecipes() {
 
         ArrayList<Recipe> suggested = new ArrayList<>();
@@ -277,7 +260,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return suggested;
     }
 
-    /** Result of a Cook & Deduct operation. */
+
     public static final class CookResult {
         private final boolean success;
         private final int rescuedIngredients;
@@ -296,11 +279,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    /**
-     * Cook & Deduct: atomically subtracts one recipe serving from the pantry.
-     * Soon-to-expire matching rows are consumed first so Rescue Mode has a real effect.
-     * If the pantry no longer covers every requirement, nothing is changed.
-     */
+
     public CookResult consumeRecipe(int recipeId) {
 
         ArrayList<RecipeRequirement> requirements = getRecipeRequirements(recipeId);

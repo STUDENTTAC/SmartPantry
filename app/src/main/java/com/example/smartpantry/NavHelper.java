@@ -6,13 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-/**
- * Shared navigation code.
- *
- * <p>Main screens (Home, Pantry, Recipes, Rescue, Settings) share one bottom
- * navigation bar (view_bottom_nav.xml). Detail screens (Add/Edit ingredient,
- * Recipe detail) use a back header instead (view_back_header.xml).</p>
- */
+
 final class NavHelper {
 
     static final int HOME = 0;

@@ -1,6 +1,9 @@
 package com.example.smartpantry;
 
-/** One row of the pantry (model class for the ingredients table). */
+/**
+ * One row of the pantry.
+ * Model class for the ingredients table.
+ */
 public class Ingredient {
 
     private int id;
@@ -71,7 +74,9 @@ public class Ingredient {
         this.expiryDate = expiryDate;
     }
 
-    /** Shows 2.0 as "2" and 0.5 as "0.5". */
+    /**
+     * Shows 2.0 as "2" and 0.5 as "0.5".
+     */
     public static String formatQuantity(double quantity) {
 
         if (quantity == Math.rint(quantity)) {

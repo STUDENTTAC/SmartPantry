@@ -5,23 +5,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Core business logic of the app: the STRICT-MATCHING rule.
- *
- * <p>A recipe may only be suggested when EVERY ingredient it needs is in the
- * pantry in at least the required quantity. If even one ingredient is missing
- * (or there is not enough of it) the recipe is rejected.</p>
- *
- * <p>To cope with simple real-world messiness the matcher normalises:</p>
- * <ul>
- *     <li>singular / plural names ("tomato" vs "Tomatoes ")</li>
- *     <li>units inside the same family (g/kg, ml/l/tsp/tbsp/cup)</li>
- *     <li>the same ingredient stored on several pantry rows (quantities are summed)</li>
- * </ul>
- *
- * <p>This class deliberately uses no Android classes so it can be unit tested
- * on the development machine (see RecipeMatcherTest).</p>
- */
+
 public final class RecipeMatcher {
 
     /** A unit's family (e.g. "mass") and its factor relative to the family base unit. */
